@@ -11,6 +11,7 @@ from . import views
 urlpatterns= [ 
         path('suppliers/', views.getSuppliers),
         path('users/', views.getUsers),
+        path('products/', views.getProducts)
     ]
 
 #/state/                            ?t=timestamp

@@ -41,6 +41,12 @@ class Supplier(models.Model):
     def __str__(self):
         return self.supplier
 
+class Product(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    product = models.CharField(max_length=60)
+    def __str__(self):
+        return self.product
+
 
 
 class User(models.Model): 

@@ -12,6 +12,11 @@ class SupplierAdmin(admin.ModelAdmin):
     ordering = ['id']
     readonly_fields = ['id']
 
+@admin.register(models.Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['id', 'product']
+    ordering = ['id']
+    readonly_fields = ['id']
 
 
 @admin.register(models.User)

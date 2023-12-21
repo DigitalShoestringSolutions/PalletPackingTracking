@@ -89,11 +89,6 @@ function App() {
 }
 
 function Dashboard({ config = {} }) {
-  // let [loaded, setLoaded] = React.useState(false)
-  // let [pending, setPending] = React.useState(false)
-
-  // let [error, setError] = React.useState(undefined)
-
 
   let { connected } = useMQTTState()
   let variant = "danger"
@@ -143,20 +138,28 @@ function BatchForm({ config }) {
   let [fruitCondition, setFruitCondition] = React.useState("")
   let [mog, setMog] = React.useState("")
   let [comments, setComments] = React.useState("")
-  let [grossWeights, setGrossWeights] = React.useState(Array(boxCount))
   const [boxCount, setBoxCount] = React.useState(1);
+
+  let [grossWeights, setGrossWeights] = React.useState(Array(boxCount))
   let totalGrossWeight = grossWeights.reduce((total, weight) => total + parseFloat(weight), 0);
   let [tare, setTare] = React.useState("")
+  let [suggestedSuppliers, setSuggestedSuppliers] = React.useState([])
+  let [suggestedUsers, setSuggestedUsers] = React.useState([])
+  let [suggestedProducts, setSuggestedProducts] = React.useState([])
+  let [user, setUser] = React.useState("")
+  let [binIds, setBinIds] = React.useState(Array(boxCount))
+  let bins = grossWeights.map((grossWeight, index) => {return {binID: binIds[index],grossWeight: grossWeight, netWeight:(grossWeight-tare)};});
+
   let totalNetWeight =  totalGrossWeight-(boxCount*tare);
   let [loaded1, setLoaded1] = React.useState(false)
   let [loaded2, setLoaded2] = React.useState(false)
   let [pending1, setPending1] = React.useState(false)
   let [pending2, setPending2] = React.useState(false)
-  let [suggestedSuppliers, setSuggestedSuppliers] = React.useState([])
-  let [suggestedUsers, setSuggestedUsers] = React.useState([])
-  let [user, setUser] = React.useState("")
-  let [binIds, setBinIds] = React.useState(Array(boxCount))
-  let bins = grossWeights.map((grossWeight, index) => {return {binID: binIds[index],grossWeight: grossWeight, netWeight:(grossWeight-tare)};});
+
+
+  let [palletInputsArray, setPalletInputsArray] = React.useState(Array(boxCount))
+
+
 
   React.useEffect(() => {
     let do_load = async () => {
@@ -179,7 +182,29 @@ function BatchForm({ config }) {
       do_load()
     }
   }, [loaded1, pending1])
-    
+  
+  React.useEffect(() => {
+    let do_load = async () => {
+      try {
+        let response = await APIBackend.api_get('http://' + document.location.host + ':8001/deliveries/products');
+        if (response.status === 200) {
+          const raw_products = response.payload;
+          console.log("products:", raw_products)
+          setSuggestedProducts(raw_products.map(item => item.product))
+          // setConfig(raw_conf)
+          // setLoaded(true)
+        } else {
+          console.log("ERROR LOADING PRODUCTS")
+        }
+      } catch (err) {
+        console.err(err);
+      }
+    }
+    if (!loaded1  && !pending1) {
+      do_load()
+    }
+  }, [loaded1, pending1])
+
 
   React.useEffect(() => {
     let do_load = async () => {
@@ -203,7 +228,9 @@ function BatchForm({ config }) {
     }
   }, [loaded2, pending2])
 
-
+  React.useEffect(() => {
+    console.log(palletInputsArray)
+  }, [palletInputsArray])
  
 
 
@@ -217,15 +244,30 @@ function BatchForm({ config }) {
     setBoxCount(boxCount + 1);
     updateWeights(boxCount + 1);
     updateBinIds(boxCount + 1);
+    updatePalletInputs(boxCount + 1);
 
   };
   const handleNegClick = () => {
     setBoxCount(boxCount - 1);
     updateWeights(boxCount - 1);
     updateBinIds(boxCount - 1);
-
-
+    updatePalletInputs(boxCount - 1);
   };
+
+  function updatePalletInputs(newBoxCount) {
+    let newPalletInputs = [...palletInputsArray];
+  
+    if (newBoxCount > boxCount) {
+      newPalletInputs.push(undefined);
+    }
+  
+    if (newBoxCount < boxCount) {
+      newPalletInputs.pop();
+    }
+  
+    setPalletInputsArray(newPalletInputs);
+
+  }
 
   function updateWeights(newBoxCount) {
     let newWeights = [...grossWeights];
@@ -338,124 +380,11 @@ function BatchForm({ config }) {
 
 
   return <Card className='my-2'>
-    <Card.Header><h4> Delivery Details: </h4></Card.Header>
+    <Card.Header><h4> Pallet Details: </h4></Card.Header>
     <Card.Body>
 
 
       <Form noValidate validated={true}>
-
-      <InputGroup className="mb-3">
-      <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-truck me-1' />Supplier</InputGroup.Text>          
-      <Form.Select 
-            value={supplier}
-            onChange={(event) => setSupplier(event.target.value)}
-            required
-            isValid={!!supplier}>
-            <option value=""> Select Supplier </option>
-            {suggestedSuppliers.map((i) => (
-              <option>
-                {i}
-              </option>
-            ))}
-          </Form.Select>
-        </InputGroup>
-
-        {/* <InputGroup className="mb-3">
-          <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-truck me-1' />Supplier</InputGroup.Text>
-          <Form.Control
-            placeholder="Supplier Name"
-            value={supplier}
-            onChange={(event) => setSupplier(event.target.value)}
-            required
-            isValid={!!supplier}
-          />
-        </InputGroup> */}
-
-        <InputGroup className="mb-3">
-          <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-circle-square me-1' />Variety</InputGroup.Text>
-          <Form.Control
-            placeholder="Grape Variety"
-            value={variety}
-            onChange={(event) => setVariety(event.target.value)}
-            required
-            isValid={!!variety}
-          />
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-          <InputGroup.Text style={{ width: "10em" }} ><i className='bi bi-123 me-1' />Grape Code</InputGroup.Text>
-          <Form.Control
-            placeholder="Grape Code"
-            value={grapeCode}
-            onChange={(event) => setgrapeCode(event.target.value)}
-            required
-            isValid={!!grapeCode}
-          />
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-          <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-person-circle me-1' />Customer</InputGroup.Text>
-          <Form.Control
-            placeholder="Customer Code"
-            value={customer}
-            onChange={(event) => setCustomer(event.target.value)}
-            required
-            isValid={!!customer}
-          />
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-        <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-search-heart me-1' />Fruit Condition</InputGroup.Text>
-          <Form.Select 
-            value={fruitCondition}
-            onChange={(event) => setFruitCondition(event.target.value)}
-            required
-            isValid={!!fruitCondition}>
-            <option value="">Select Fruit Condition</option>
-            <option>P</option>
-            <option>A</option>
-            <option>G</option>
-
-          </Form.Select>
-          <Form.Select 
-            aria-label="Default select example"
-            value={handpicked}
-            onChange={(event) => setHandpicked(event.target.value)}
-            required
-            >
-              <option value="" >Select</option>
-              <option value='True'>Hand Picked</option>
-              <option value='False'>Not Hand Picked</option>
-            </Form.Select>
-          
-        </InputGroup>
-
-
-        <InputGroup className="mb-3">
-        <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-flower1 me-1' />MOG Level</InputGroup.Text>
-          <Form.Select 
-            value={mog}
-            onChange={(event) => setMog(event.target.value)}
-            required
-            isValid={!!mog}>
-            <option value="">Select MOG Level</option>
-            {mogOptions}
-            
-          </Form.Select>
-          
-        </InputGroup>
-
-        <InputGroup className="mb-3">
-          <InputGroup.Text style={{ width: "10em" }} ><i className='bi bi-chat-square-text me-1' />Comments</InputGroup.Text>
-          <Form.Control
-            placeholder="Comments..."
-            as="textarea" 
-            aria-label="With textarea"
-            value={comments}
-            onChange={(event) => setComments(event.target.value)}
-            isValid={!!comments}
-          />
-        </InputGroup>
 
         <InputGroup className="mb-3">
         <InputGroup.Text style={{ width: "10em" }}><i className='bi bi-person-circle me-1' />User</InputGroup.Text>
@@ -473,76 +402,80 @@ function BatchForm({ config }) {
           </Form.Select>
         </InputGroup>
 
-        <Form.Label column="lg" lg={2}> Weights: </Form.Label>
-        <InputGroup className="mb-3">
-            <InputGroup.Text style={{ width: "10em" }} ><i className='bi bi-bag-plus me-1' />Tare</InputGroup.Text>
-            <Form.Select 
-              aria-label="Default select example"
-              required
-              value={tare}
-              onChange={(event) => setTare(event.target.value)}
-              >
-                <option value = "" >Select Tare Weight</option>
-                <option >99</option>
-                <option >25</option>
-            </Form.Select>
-        </InputGroup>
+        
        
               
         
+        
+
         {[...Array(boxCount)].map((_, i) => (
           <InputGroup className="mb-3">
-            <Form.Control 
-              placeholder= "Bin Number"
-              value={binIds[i]}
+            <Form.Select 
+              placeholder= "Grower"
+              value={palletInputsArray[i] && palletInputsArray[i].grower ? palletInputsArray[i].grower : ''}
               required
-              onChange={(event) => {
-                let newBinIds = [...binIds];
-                newBinIds[i] = event.target.value;
-                setBinIds(newBinIds);
+              onChange={e => {
+                let newArray = [...palletInputsArray];
+                newArray[i] = {...newArray[i], grower: e.target.value};
+                setPalletInputsArray(newArray);
+              }}>
+              <option value=""> Select Grower </option>
+              {suggestedSuppliers.map((i) => (
+                <option>
+                  {i}
+                </option>
+              ))}
+            </Form.Select>
+
+
+            <Form.Select 
+              placeholder= "Product"
+              value={palletInputsArray[i] && palletInputsArray[i].product ? palletInputsArray[i].product : ''}
+              required
+              onChange={e => {
+                let newArray = [...palletInputsArray];
+                newArray[i] = {...newArray[i], product: e.target.value};
+                setPalletInputsArray(newArray);
+              }}
+              >
+              <option value=""> Select Product </option>
+              {suggestedProducts.map((i) => (
+                <option>
+                  {i}
+                </option>
+              ))}
+            </Form.Select>
+
+            <Form.Control 
+              placeholder= "Count"
+              value={palletInputsArray[i] && palletInputsArray[i].count ? palletInputsArray[i].count : ''}
+              required
+              type="number"
+              onChange={e => {
+                let newArray = [...palletInputsArray];
+                newArray[i] = {...newArray[i], count: e.target.value};
+                setPalletInputsArray(newArray);
               }}
               />
-            <Form.Control 
-              placeholder= "Gross Weight (kg)"
-              value={grossWeights[i]}
-              required
-              isInvalid={!validateNumber(grossWeights[i])}
-              onChange={(event) => {
-                let newGrossWeights = [...grossWeights];
-                newGrossWeights[i] = Number(event.target.value.replace(/\D/, ''));
-                setGrossWeights(newGrossWeights);
-              }}
-              />
-            <Button disabled = {i+1<boxCount} variant="outline-secondary" onClick={handleClick}>+</Button>
-            <Button disabled = {i+1<boxCount || i==0} variant="outline-secondary" onClick={handleNegClick}>-</Button>
-              
           
+            <Button disabled={i+1<boxCount} variant="outline-secondary" onClick={handleClick}>+</Button>
+            <Button disabled={i+1<boxCount || i==0} variant="outline-secondary" onClick={handleNegClick}>-</Button>
+              
           </InputGroup>
         ))}
+
+
 
         
 
     
-        <Card.Subtitle className="mb-2 text-muted">Bins: {boxCount}, Gross Weight: {totalGrossWeight} kg, Net Weight: {totalNetWeight} kg </Card.Subtitle>
+        {/* <Card.Subtitle className="mb-2 text-muted">Bins: {boxCount}, Gross Weight: {totalGrossWeight} kg, Net Weight: {totalNetWeight} kg </Card.Subtitle> */}
 
 
 
-        {/* <div className="sigBox">
-          <Form.Label column="lg" lg={2}> Sign Here: </Form.Label>
-
-          <SignatureCanvas 
-              penColor='green'
-              canvasProps={{
-                width: 500,
-                height: 200, 
-                className: 'sigCanvas'}} />
-
-        </div> */}
+        
 
         <Button className='float-end' onClick={onSubmit}>Submit</Button>
-        {/* <Button className='float-end' onClick={onAutoFill}>AutoFill</Button> */}
-
-
 
       </Form>
     </Card.Body>

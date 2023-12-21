@@ -30,3 +30,9 @@ def getUsers(request):
     serializer = serializers.UserSerializer(users_qs,many=True)
     return Response(serializer.data)
 
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,BrowsableAPIRenderer))
+def getProducts(request):
+    products_qs = models.Product.objects.all()
+    serializer = serializers.ProductSerializer(products_qs,many=True)
+    return Response(serializer.data)
