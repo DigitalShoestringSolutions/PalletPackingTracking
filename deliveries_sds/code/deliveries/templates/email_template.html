@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>New Delivery!</title>
+  </head>
+  <body>
+    <div class="container">
+        <h1>{{ supplier }} - {{ variety }}</h1>
+        <p id="timeP">Timestamp: {{ timestamp }}</p>
+        <p>Total Net Weight: {{ totalNetWeight }} kg </p>
+        <hr/>
+        <h2>Grape Information</h2>
+        <p>MOG Level: {{ mog }} </p>
+        <p>Fruit Condition: {{ fruitCondition }}</p>
+        <p>Grape Code: {{ grapeCode }}</p>
+        <p>Handpicked: {{ True }}</p>
+        <p>Customer: {{ customer }}</p>
+        <hr/>
+        <p>User: {{ user }}</p>
+        <p>Comments: {{ comments }}</p>
+        <hr/>
+        <h2>Bins</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Bin ID</th>
+                    <th>Gross Weight</th>
+                    <th>Net Weight</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bin in bins %}
+                    <tr>
+                        <td>{{ bin.binID }}</td>
+                        <td>{{ bin.grossWeight }} kg</td>
+                        <td>{{ bin.netWeight }} kg</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p>Total Net Weight: {{ totalNetWeight }} kg </p>
+        <p>Total Gross Weight: {{ totalGrossWeight }} kg </p>
+        <p>Tare: {{ tare }} kg </p>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+  </body>
+</html>

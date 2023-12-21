@@ -1,0 +1,107 @@
+version: '2'
+
+services:
+    deliveries-sds:
+        extends: 
+            file: deliveries_sds/app.yml
+            service: app
+        networks: 
+            internal: 
+                aliases: 
+                    - deliveries-sds.docker.local
+        logging: 
+            driver: syslog
+            options: 
+                tag: docker-deliveries-sds
+        env_file:
+            - django_secret_key
+        restart: unless-stopped
+    user-input-dc:
+        extends:
+            file: user_input_dc/app.yml
+            service: app
+        networks:
+            internal: 
+                aliases: 
+                    - user-input-dc.docker.local
+        logging: 
+            driver: syslog
+            options: 
+                tag: docker-user-input-dc
+    mqtt_broker:
+            extends:
+                file: mqtt_broker/app.yml
+                service: app
+            networks:
+                internal:
+                    aliases:
+                        - mqtt.docker.local
+            logging:
+                    driver: syslog
+                    options:
+                            tag: docker-mqtt-broker
+            restart: unless-stopped
+        
+
+networks:
+        internal:
+            name: shoestring-internal
+
+
+
+            
+# version: "2"
+
+# services:
+#       sql-db:
+#     extends:
+#       file: database/app.yml
+#       service: db
+#     networks:
+#             internal:
+#                 aliases:
+#                     - sql-db.docker.local
+#     logging:
+#             driver: syslog
+#             options:
+#                 tag: docker-sql-db
+#     restart: unless-stopped
+#     # depends_on:
+#     #         - "mqtt_broker"
+
+
+#   # user-input:
+#   #           extends:
+#   #               file: user_input_dc/app.yml
+#   #               service: app
+#   #           networks:
+#   #               internal:
+#   #                   aliases:
+#   #                       - user-input.docker.local
+#   #           logging:
+#   #                   driver: syslog
+#   #                   options:
+#   #                           tag: docker-user-input
+#   #           restart: unless-stopped
+#   #           env_file:
+#   #               - django_secret_key
+
+
+
+
+
+#   # mqtt_broker:
+#   #       extends:
+#   #           file: mqtt_broker/app.yml
+#   #           service: app
+#   #       restart: unless-stopped
+#   #       logging:
+#   #           driver: syslog
+#   #           options:
+#   #               tag: docker-mqtt-broker
+#   #       networks:
+#   #           internal:
+#   #               aliases:
+#   #                   - mqtt.docker.local
+
+
