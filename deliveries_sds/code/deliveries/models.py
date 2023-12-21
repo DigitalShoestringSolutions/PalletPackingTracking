@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import datetime
+
 
 
 class Bin(models.Model):
@@ -7,6 +9,25 @@ class Bin(models.Model):
     gross_weight = models.PositiveIntegerField(default=0, editable=True)
     net_weight = models.PositiveIntegerField(default=0, editable=True)
 
+    def __str__(self):
+        return str(self.id)
+
+
+class Pallet(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.CharField(max_length=10)    
+    timestamp = models.DateTimeField()
+    
+    def __str__(self):
+        return str(self.id)
+
+
+class PalletItem(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    product = models.CharField(null=True, max_length=60)
+    quantity = models.PositiveIntegerField(default=0, editable=True)
+    pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE, null=True)
+    timestamp = models.DateTimeField(default=datetime.now)
     def __str__(self):
         return str(self.id)
 

@@ -318,38 +318,15 @@ function BatchForm({ config }) {
   // let { product: c_product, batch: c_batch, expires: c_expires, quantity: c_quantity } = useMQTTState()
 
   const onSubmit = () => {
-    if (supplier && totalNetWeight && variety && customer && handpicked && grapeCode && fruitCondition && mog && totalNetWeight && tare && bins && totalGrossWeight && user ) {
+    if (palletInputsArray && user) {
       sendJsonMessage("delivery_details/" + config.id, 
                       { id: config.id,
-                        supplier: supplier,
-                        variety: variety,
-                        customer: customer,
-                        handpicked: handpicked,
-                        grapeCode: grapeCode,
-                        fruitCondition: fruitCondition,
-                        mog: mog,
-                        comments: comments, 
-                        totalNetWeight: totalNetWeight,
-                        tare: tare,
-                        bins: bins, 
-                        totalGrossWeight: totalGrossWeight,
-                        totalNetWeight: totalNetWeight, 
+                        items: palletInputsArray,
                         user: user,
                       }, 1, true);
-      setSupplier("");
-      setVariety(""); 
-      setCustomer("");
+      
       setBoxCount(1);
-      setgrapeCode("");
-      setFruitCondition("");
-      setMog("");
-      setComments("");
-      setGrossWeights([""]);
-      setTare(0);
-      setBinIds([""]);
-      setUser("");
-      setHandpicked("");  
-      console.log(binIds)
+      setUser("");  
       console.log(boxCount)
     
     } else {

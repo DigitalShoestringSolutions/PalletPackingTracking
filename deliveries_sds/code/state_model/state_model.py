@@ -1,7 +1,7 @@
 import zmq
 import json
 import threading
-from deliveries.models import Delivery, Bin, Email
+from deliveries.models import Delivery, Bin, Email, Pallet
 # from tracking_events.models import TrackingEvent
 from datetime import datetime
 from tzlocal import get_localzone
@@ -48,67 +48,47 @@ class StateModel:
         try:
             #validate
             timestamp = dateutil.parser.isoparse(raw_msg['timestamp'])
-            supplier = raw_msg['supplier']
-            total_net_weight = raw_msg['totalNetWeight']
-            total_gross_weight = raw_msg['totalGrossWeight']
-            variety = raw_msg['variety']
-            customer = raw_msg['customer']
-            handpicked = raw_msg['handpicked']
-            grape_code = raw_msg['grapeCode']
-            fruit_condition = raw_msg['fruitCondition']
-            mog = raw_msg['mog']
-            comments = raw_msg['comments']
-            tare = raw_msg['tare']
+            
             user = raw_msg['user']
-            bins = []
-            for bin_data in raw_msg['bins']:
-                bin_instance = Bin.objects.create(
-                    bin_number=int(bin_data['binID']),
-                    gross_weight=int(bin_data['grossWeight']),
-                    net_weight=int(bin_data['netWeight'])  
+            
+
+            newPallet = Pallet.objects.create(timestamp=timestamp)
+            
+            items = []
+            for item_entry in raw_msg['items']:
+                pallet_item_instance = PalletItem.objects.create(
+                    product=item_entry['product'],
+                    grower=item_entry['grower'],
+                    quantity=int(bin_data['grossWeight']),
+                    pallet=newPallet
                 )
-                bins.append(bin_instance)
+            
+                # items.append(pallet_item_instance)
+            
 
-
-            newDelivery = Delivery.objects.create(
-                supplier=supplier,
-                timestamp=timestamp,
-                total_net_weight=total_net_weight,
-                customer = customer,
-                handpicked = handpicked,
-                grapecode =  grape_code,
-                fruitCondition = fruit_condition,
-                mog = mog,
-                total_gross_weight = total_gross_weight,
-                tare = tare,
-                user = user,
-                comments = comments
-
-            )
 
            
                 
-            newDelivery.bins.add(*bins)
 
-            context = raw_msg
-            context['timestamp'] = datetime.fromisoformat(context['timestamp'].replace('Z', '+00:00')).replace(tzinfo=pytz.UTC).astimezone(get_localzone()).strftime('%Y-%m-%d %H:%M:%S')
-            html_content = render_to_string('email_template.html', context)
-            emails = Email.objects.all()
-            email_str_list = []
-            for i in emails:
-                print (i.email)
-                email_str_list.append(i.email)
+            # context = raw_msg
+            # context['timestamp'] = datetime.fromisoformat(context['timestamp'].replace('Z', '+00:00')).replace(tzinfo=pytz.UTC).astimezone(get_localzone()).strftime('%Y-%m-%d %H:%M:%S')
+            # html_content = render_to_string('email_template.html', context)
+            # emails = Email.objects.all()
+            # email_str_list = []
+            # for i in emails:
+            #     print (i.email)
+            #     email_str_list.append(i.email)
 
-            send_mail(
-                subject = 'New Delivery!',
-                message = 'You have a new delivery!',
-                html_message = html_content,
-                from_email = 'deliverytracking@outlook.com',
-                recipient_list = email_str_list,
-                fail_silently=False,
-            )
+            # send_mail(
+            #     subject = 'New Delivery!',
+            #     message = 'You have a new delivery!',
+            #     html_message = html_content,
+            #     from_email = 'deliverytracking@outlook.com',
+            #     recipient_list = email_str_list,
+            #     fail_silently=False,
+            # )
 
-            print("Email sent")
+            # print("Email sent")
 
                 # if newFromQuantity and newFromQuantity != 0:
                 #     newFromState = State.objects.create(item_id=item_id,location_link=loc_link_from,start=timestamp,quantity=newFromQuantity)
