@@ -52,7 +52,7 @@ class StateModel:
             user = raw_msg['user']
             
 
-            newPallet = Pallet.objects.create()
+            newPallet = Pallet.objects.create(user=user, timestamp=timestamp, status='Packed')
             
             items = []
             for item_entry in raw_msg['items']:
@@ -63,9 +63,9 @@ class StateModel:
                     pallet=newPallet
                 )
             
-                # items.append(pallet_item_instance)
+                items.append(pallet_item_instance)
             
-
+            newPallet.items.set(items)
 
            
                 

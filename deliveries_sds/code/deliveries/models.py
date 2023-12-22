@@ -15,8 +15,11 @@ class Bin(models.Model):
 
 class Pallet(models.Model):
     id = models.BigAutoField(primary_key=True)
-    # user = models.CharField(max_length=10)    
-    # timestamp = models.DateTimeField()
+    user = models.CharField(max_length=10, default='None')   
+    timestamp = models.DateTimeField(default=datetime.now)
+    status = models.CharField(max_length=10, default='Packed')
+    items = models.ManyToManyField("PalletItem", related_name="pallets", blank=True)
+
 
     def __str__(self):
         return str(self.id)
