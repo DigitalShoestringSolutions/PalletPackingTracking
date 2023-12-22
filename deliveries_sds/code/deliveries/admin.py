@@ -43,7 +43,7 @@ class EmailAdmin(admin.ModelAdmin):
 
 @admin.register(models.Pallet)
 class PalletAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user']
+    list_display = ['id']
     ordering = ['id']
     readonly_fields = ['id']
 

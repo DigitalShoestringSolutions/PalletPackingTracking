@@ -15,15 +15,16 @@ class Bin(models.Model):
 
 class Pallet(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user = models.CharField(max_length=10)    
-    timestamp = models.DateTimeField()
-    
+    # user = models.CharField(max_length=10)    
+    # timestamp = models.DateTimeField()
+
     def __str__(self):
         return str(self.id)
 
 
 class PalletItem(models.Model):
     id = models.BigAutoField(primary_key=True)
+    grower =  models.CharField(null=True, max_length=60)
     product = models.CharField(null=True, max_length=60)
     quantity = models.PositiveIntegerField(default=0, editable=True)
     pallet = models.ForeignKey(Pallet, on_delete=models.CASCADE, null=True)

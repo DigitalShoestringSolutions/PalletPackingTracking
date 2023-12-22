@@ -130,34 +130,18 @@ function Dashboard({ config = {} }) {
 
 
 function BatchForm({ config }) {
-  let [supplier, setSupplier] = React.useState("")
-  let [variety, setVariety] = React.useState("")
-  let [customer, setCustomer] = React.useState("")
-  let [handpicked, setHandpicked] = React.useState("")
-  let [grapeCode, setgrapeCode] = React.useState("")
-  let [fruitCondition, setFruitCondition] = React.useState("")
-  let [mog, setMog] = React.useState("")
-  let [comments, setComments] = React.useState("")
+  
   const [boxCount, setBoxCount] = React.useState(1);
-
-  let [grossWeights, setGrossWeights] = React.useState(Array(boxCount))
-  let totalGrossWeight = grossWeights.reduce((total, weight) => total + parseFloat(weight), 0);
-  let [tare, setTare] = React.useState("")
   let [suggestedSuppliers, setSuggestedSuppliers] = React.useState([])
   let [suggestedUsers, setSuggestedUsers] = React.useState([])
   let [suggestedProducts, setSuggestedProducts] = React.useState([])
   let [user, setUser] = React.useState("")
-  let [binIds, setBinIds] = React.useState(Array(boxCount))
-  let bins = grossWeights.map((grossWeight, index) => {return {binID: binIds[index],grossWeight: grossWeight, netWeight:(grossWeight-tare)};});
-
-  let totalNetWeight =  totalGrossWeight-(boxCount*tare);
   let [loaded1, setLoaded1] = React.useState(false)
   let [loaded2, setLoaded2] = React.useState(false)
   let [pending1, setPending1] = React.useState(false)
   let [pending2, setPending2] = React.useState(false)
-
-
-  let [palletInputsArray, setPalletInputsArray] = React.useState(Array(boxCount))
+  let keysList = ["grower", "product", "count"];
+  let [palletInputsArray, setPalletInputsArray] = React.useState([])
 
 
 
@@ -242,15 +226,11 @@ function BatchForm({ config }) {
 
   const handleClick = () => {
     setBoxCount(boxCount + 1);
-    updateWeights(boxCount + 1);
-    updateBinIds(boxCount + 1);
     updatePalletInputs(boxCount + 1);
 
   };
   const handleNegClick = () => {
     setBoxCount(boxCount - 1);
-    updateWeights(boxCount - 1);
-    updateBinIds(boxCount - 1);
     updatePalletInputs(boxCount - 1);
   };
 
@@ -269,56 +249,27 @@ function BatchForm({ config }) {
 
   }
 
-  function updateWeights(newBoxCount) {
-    let newWeights = [...grossWeights];
   
-    if (newBoxCount > boxCount) {
-      newWeights.push(undefined);
-    }
-  
-    if (newBoxCount < boxCount) {
-      newWeights.pop();
-    }
-  
-    setGrossWeights(newWeights);
 
+
+
+  function validateItemArray() {
+    console.log("*** Validating Item Array ***");
+    let valid = true;
+    if (palletInputsArray.length === 0) {valid = false;}
+    palletInputsArray.forEach((_, index) => {
+      let itemKeys = Object.keys(palletInputsArray[index]);
+      if (itemKeys.length !== keysList.length) {valid = false;}
+      itemKeys.forEach((key) => {if (palletInputsArray[index][key] === undefined || palletInputsArray[index][key] === "") {valid = false;}});
+    });
+    return valid;
   }
-
-  function updateBinIds(newBoxCount) {
-    let newBinIds = [...binIds];
   
-    if (newBoxCount > boxCount) {
-      newBinIds.push(undefined);
-    }
-  
-    if (newBoxCount < boxCount) {
-      newBinIds.pop();
-    }
-  
-    setBinIds(newBinIds);
-    console.log(bins)
-    
-  }
-
-  function validateComments(comments) {
-    return typeof comments === 'string' && comments.trim().length > 0;
-  }
-
-  function validateNumber(value) {
-    console.log()
-    return typeof value === 'integer' || typeof value == 'float';
-  }
-
-
-
-
 
   let { sendJsonMessage } = useMQTTControl()
 
-  // let { product: c_product, batch: c_batch, expires: c_expires, quantity: c_quantity } = useMQTTState()
-
   const onSubmit = () => {
-    if (palletInputsArray && user) {
+    if (palletInputsArray && user && validateItemArray()) {
       sendJsonMessage("delivery_details/" + config.id, 
                       { id: config.id,
                         items: palletInputsArray,
@@ -327,33 +278,13 @@ function BatchForm({ config }) {
       
       setBoxCount(1);
       setUser("");  
-      console.log(boxCount)
+      setPalletInputsArray([]);
+      console.log("*** Reset Form ***")
     
     } else {
       alert("Please fill out all fields")
-      console.log(supplier, totalNetWeight, variety, customer, handpicked, grapeCode, fruitCondition, mog, comments, totalNetWeight, tare, bins, totalGrossWeight, totalNetWeight, user)
     }
   }
-
-  const onAutoFill = () => {
-    setSupplier("GrapesRUs");
-    setVariety("Variety 1"); 
-    setCustomer("Customer 1");
-    setBoxCount(1);
-    setgrapeCode("Grape Code 1");
-    setFruitCondition("P");
-    setMog("5");
-    setComments("Looking Good!");
-    setGrossWeights(["150"]);
-    setTare(99);
-    setBinIds(["1"]);
-    setUser("JM");
-    setHandpicked("True");  
-
-  }
-
-  
-  
 
 
   return <Card className='my-2'>

@@ -1,7 +1,7 @@
 import zmq
 import json
 import threading
-from deliveries.models import Delivery, Bin, Email, Pallet
+from deliveries.models import Delivery, Bin, Email, Pallet, PalletItem
 # from tracking_events.models import TrackingEvent
 from datetime import datetime
 from tzlocal import get_localzone
@@ -52,14 +52,14 @@ class StateModel:
             user = raw_msg['user']
             
 
-            newPallet = Pallet.objects.create(timestamp=timestamp)
+            newPallet = Pallet.objects.create()
             
             items = []
             for item_entry in raw_msg['items']:
                 pallet_item_instance = PalletItem.objects.create(
                     product=item_entry['product'],
                     grower=item_entry['grower'],
-                    quantity=int(bin_data['grossWeight']),
+                    quantity=int(item_entry['count']),
                     pallet=newPallet
                 )
             
