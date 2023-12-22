@@ -48,11 +48,11 @@ class StateModel:
         try:
             #validate
             timestamp = dateutil.parser.isoparse(raw_msg['timestamp'])
-            
+            start_time = dateutil.parser.isoparse(raw_msg['startTimeStamp'])
             user = raw_msg['user']
             
 
-            newPallet = Pallet.objects.create(user=user, timestamp=timestamp, status='Packed')
+            newPallet = Pallet.objects.create(user=user, timestamp=timestamp, status='Packed', start_time=start_time)
             
             items = []
             for item_entry in raw_msg['items']:
@@ -67,7 +67,7 @@ class StateModel:
             
             newPallet.items.set(items)
 
-           
+        #    INSERT CODE HERE TO SEND MQTT MESSAGE WITH PRINT TOPIC AND MESSAGE
                 
 
             # context = raw_msg

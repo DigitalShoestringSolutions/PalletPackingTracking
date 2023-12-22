@@ -1,13 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Pagination from 'react-bootstrap/Pagination'
-import Table from 'react-bootstrap/Table'
-import Carousel from 'react-bootstrap/Carousel'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
-import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import Card from 'react-bootstrap/Card'
@@ -21,7 +15,6 @@ import './app.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import { custom_new_message_action, CustomReducer } from './custom_mqtt';
 import { Alert, Badge, Form, InputGroup } from 'react-bootstrap';
-import SignatureCanvas from 'react-signature-canvas'
 
 
 function App() {
@@ -130,7 +123,7 @@ function Dashboard({ config = {} }) {
 
 
 function BatchForm({ config }) {
-  
+
   const [boxCount, setBoxCount] = React.useState(1);
   let [suggestedSuppliers, setSuggestedSuppliers] = React.useState([])
   let [suggestedUsers, setSuggestedUsers] = React.useState([])
@@ -142,6 +135,7 @@ function BatchForm({ config }) {
   let [pending2, setPending2] = React.useState(false)
   let keysList = ["grower", "product", "count"];
   let [palletInputsArray, setPalletInputsArray] = React.useState([])
+  let [startTimeStamp, setStartTimeStamp] = React.useState(new Date().toISOString());
 
 
 
@@ -151,7 +145,6 @@ function BatchForm({ config }) {
         let response = await APIBackend.api_get('http://' + document.location.host + ':8001/deliveries/suppliers');
         if (response.status === 200) {
           const raw_suppliers = response.payload;
-          console.log("suppliers:", raw_suppliers)
           setSuggestedSuppliers(raw_suppliers.map(item => item.supplier))
           // setConfig(raw_conf)
           // setLoaded(true)
@@ -212,10 +205,6 @@ function BatchForm({ config }) {
     }
   }, [loaded2, pending2])
 
-  React.useEffect(() => {
-    console.log(palletInputsArray)
-  }, [palletInputsArray])
- 
 
 
   const mogOptions = [];
@@ -249,10 +238,6 @@ function BatchForm({ config }) {
 
   }
 
-  
-
-
-
   function validateItemArray() {
     console.log("*** Validating Item Array ***");
     let valid = true;
@@ -274,11 +259,13 @@ function BatchForm({ config }) {
                       { id: config.id,
                         items: palletInputsArray,
                         user: user,
+                        startTimeStamp: startTimeStamp,
                       }, 1, true);
       
       setBoxCount(1);
       setUser("");  
       setPalletInputsArray([]);
+      setStartTimeStamp(new Date().toISOString());
       console.log("*** Reset Form ***")
     
     } else {

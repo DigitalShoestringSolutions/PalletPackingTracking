@@ -19,6 +19,7 @@ class Pallet(models.Model):
     timestamp = models.DateTimeField(default=datetime.now)
     status = models.CharField(max_length=10, default='Packed')
     items = models.ManyToManyField("PalletItem", related_name="pallets", blank=True)
+    start_time = models.DateTimeField(null=True)
 
 
     def __str__(self):
