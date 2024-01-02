@@ -68,7 +68,16 @@ class StateModel:
             newPallet.items.set(items)
 
         #    INSERT CODE HERE TO SEND MQTT MESSAGE WITH PRINT TOPIC AND MESSAGE
-                
+            #send update event
+            to_print_msg = {
+                    'item_id':newPallet.id,
+                    'timestamp':newPallet.timestamp.isoformat(),
+                    }
+
+            print(to_print_msg)
+            #send update
+            self.pushsocket.send_multipart(["print".encode(),json.dumps(to_print_msg).encode()])
+
 
             # context = raw_msg
             # context['timestamp'] = datetime.fromisoformat(context['timestamp'].replace('Z', '+00:00')).replace(tzinfo=pytz.UTC).astimezone(get_localzone()).strftime('%Y-%m-%d %H:%M:%S')

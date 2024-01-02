@@ -41,7 +41,19 @@ services:
                     options:
                             tag: docker-mqtt-broker
             restart: unless-stopped
-        
+    printer:
+        extends:
+            file: printer/app.yml
+            service: app
+        networks:
+            internal:
+                aliases:
+                    - printer.docker.local
+        logging:
+            driver: syslog
+            options:
+                tag: docker-printer
+        restart: unless-stopped         
 
 networks:
         internal:

@@ -1,0 +1,183 @@
+[
+    {
+        "id": "0e1258dcaa4646a3",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c1a743fbe5ebc64c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "0df5d573c269e3d7",
+        "type": "mqtt-broker",
+        "name": "IP",
+        "broker": "192.168.64.2",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "a151743b44755c44",
+        "type": "mqtt in",
+        "z": "0e1258dcaa4646a3",
+        "name": "Print Message",
+        "topic": "print",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0df5d573c269e3d7",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "0709f1f4d0635cd6",
+                "cbddd9f859fac766"
+            ]
+        ]
+    },
+    {
+        "id": "0709f1f4d0635cd6",
+        "type": "debug",
+        "z": "0e1258dcaa4646a3",
+        "name": "Input Message",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "0843218562606a96",
+        "type": "exec",
+        "z": "0e1258dcaa4646a3",
+        "command": "python3 /code/test.py",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 540,
+        "y": 180,
+        "wires": [
+            [
+                "676ca53740426dc7"
+            ],
+            [
+                "676ca53740426dc7"
+            ],
+            [
+                "676ca53740426dc7"
+            ]
+        ]
+    },
+    {
+        "id": "676ca53740426dc7",
+        "type": "debug",
+        "z": "0e1258dcaa4646a3",
+        "name": "Python Code",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "cbddd9f859fac766",
+        "type": "function",
+        "z": "0e1258dcaa4646a3",
+        "name": "JSONify",
+        "func": "// Input data from the previous node\nvar inputData = msg.payload;\n\n// Construct the command to execute the Python script with an argument\nvar pythonScriptPath = '/code/test.py'; \nvar argumentValue = JSON.stringify(inputData);\nvar command = 'python3 ' + pythonScriptPath + ' ' + argumentValue;\n\n// Attach the command to the message payload\nmsg.payload = argumentValue;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "0843218562606a96",
+                "bcfbcaa8b1f131da"
+            ]
+        ]
+    },
+    {
+        "id": "bcfbcaa8b1f131da",
+        "type": "debug",
+        "z": "0e1258dcaa4646a3",
+        "name": "Function payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 320,
+        "wires": []
+    }
+]

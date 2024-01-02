@@ -1,1 +1,1 @@
-docker down
+docker compose down
