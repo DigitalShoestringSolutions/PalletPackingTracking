@@ -95,67 +95,66 @@ function Routing(props) {
 
   
 
-  React.useEffect(() => {
-    if (localStorage.getItem('shown_locations')) {
-      setShownLocations(JSON.parse(localStorage.getItem('shown_locations')))
-      console.log("shown set to storage")
-      setShownLocsSet(true)
-    }
+  // React.useEffect(() => {
+  //   if (localStorage.getItem('shown_locations')) {
+  //     setShownLocations(JSON.parse(localStorage.getItem('shown_locations')))
+  //     console.log("shown set to storage")
+  //     setShownLocsSet(true)
+  //   }
 
-    if (localStorage.getItem('page_size')) {
-      let value = JSON.parse(localStorage.getItem('page_size'))
-      setPageSize(value)
-      console.log("page size from storage",value)
-    }
-    setStorageLoaded(true)
-  }, [])
+  //   if (localStorage.getItem('page_size')) {
+  //     let value = JSON.parse(localStorage.getItem('page_size'))
+  //     setPageSize(value)
+  //     console.log("page size from storage",value)
+  //   }
+  //   setStorageLoaded(true)
+  // }, [])
 
-  React.useEffect(() => {
-    if (!shown_locs_set) {
+  // React.useEffect(() => {
+  //   if (!shown_locs_set) {
 
-      if (props.config.shown_locations) {
-        if (props.config.shown_locations === "*") {
-          if (location_list.length > 0) {
-            setShownLocations(location_list.map(elem => elem.id))
-            console.log("shown set to all")
-            setShownLocsSet(true)
-          }
-        } else if (props.config.shown_locations) {
-          setShownLocations(props.config.shown_locations)
-          console.log("shown set to config")
-          setShownLocsSet(true)
-        }
-      }
-    }
-  }, [location_list, props.config, shown_locs_set])
+  //     if (props.config.shown_locations) {
+  //       if (props.config.shown_locations === "*") {
+  //         if (location_list.length > 0) {
+  //           setShownLocations(location_list.map(elem => elem.id))
+  //           console.log("shown set to all")
+  //           setShownLocsSet(true)
+  //         }
+  //       } else if (props.config.shown_locations) {
+  //         setShownLocations(props.config.shown_locations)
+  //         console.log("shown set to config")
+  //         setShownLocsSet(true)
+  //       }
+  //     }
+  //   }
+  // }, [location_list, props.config, shown_locs_set])
 
-  React.useEffect(() => {
-    if (storageLoaded && shown_locations.length > 0) {
-      console.log("Saving shown ", shown_locations)
-      localStorage.setItem('shown_locations', JSON.stringify(shown_locations));
-    }
-  }, [shown_locations, storageLoaded])
+  // React.useEffect(() => {
+  //   if (storageLoaded && shown_locations.length > 0) {
+  //     console.log("Saving shown ", shown_locations)
+  //     localStorage.setItem('shown_locations', JSON.stringify(shown_locations));
+  //   }
+  // }, [shown_locations, storageLoaded])
 
-  React.useEffect(() => {
-    if (storageLoaded) {
-      console.log("Saving page_size ", page_size)
-      localStorage.setItem('page_size', JSON.stringify(page_size));
-    }
-  }, [page_size, storageLoaded])
+  // React.useEffect(() => {
+  //   if (storageLoaded) {
+  //     console.log("Saving page_size ", page_size)
+  //     localStorage.setItem('page_size', JSON.stringify(page_size));
+  //   }
+  // }, [page_size, storageLoaded])
 
   return (
     <Routes>
-      <Route path='/' element={<Base  date={date} setDate={setDate} location_list={location_list} setLocationList={setLocationList} setResult={setResult} {...props} />}>
-        <Route path='/settings' element={<SettingsPage location_list={location_list} config={props.config} shown_locations={shown_locations} setShownLocations={setShownLocations} page_size={page_size} setPageSize={setPageSize} />} />
-        {/* <Route path='/loc/:location_id' element={<Dashboard location_list={location_list} config={props.config} />} /> */}
-        <Route index element={<Dashboard date={date} setDate={setDate} result={result} location_list={location_list} config={props.config} shown_locations={shown_locations} settings_page_size={page_size} />}></Route>
+      <Route path='/' element={<Base  date={date} setDate={setDate} setResult={setResult} {...props} />}>
+        {/* <Route path='/settings' element={<SettingsPage location_list={location_list} config={props.config} shown_locations={shown_locations} setShownLocations={setShownLocations} page_size={page_size} setPageSize={setPageSize} />} /> */}
+        <Route index element={<Dashboard date={date} setDate={setDate} result={result}  />}></Route>
       </Route>
     </Routes>
   )
 }
 
 
-function Base({ date, setDate, setResult, setLocationList, config }) {
+function Base({ date, setDate, setResult, config }) {
   let [loaded, setLoaded] = React.useState(false)
   let [pending, setPending] = React.useState(false)
   let [error, setError] = React.useState(null)
@@ -189,7 +188,7 @@ function Base({ date, setDate, setResult, setLocationList, config }) {
     if (!loaded && !pending) {
       do_load()
     }
-  }, [loaded, pending, config, setLocationList])
+  }, [loaded, pending, config])
 
   if (!loaded) {
     return <Container fluid="md">
@@ -228,16 +227,16 @@ function BSNavLink({ children, className, ...props }) {
   return <NavLink className={({ isActive }) => (isActive ? ("nav-link active " + className) : ("nav-link " + className))} {...props}>{children}</NavLink>
 }
 
-function Dashboard({ config = {}, result, location_list, shown_locations, settings_page_size, setDate, date }) {
+function Dashboard({ config = {}, result, setDate, date }) {
   const { sendJsonMessage } = useMQTTControl()
   let toast_dispatch = useToastDispatch()
   let dispatch = useMQTTDispatch()
   let { connected, items_state } = useMQTTState()
 
-  let [items_loaded, setItemsLoaded] = React.useState(false)
-  let [items_pending, setItemsPending] = React.useState(false)
-  let [items_error, setItemsError] = React.useState(undefined)
-  let [items_reload, setItemsReload] = React.useState(undefined)
+  // let [items_loaded, setItemsLoaded] = React.useState(false)
+  // let [items_pending, setItemsPending] = React.useState(false)
+  // let [items_error, setItemsError] = React.useState(undefined)
+  // let [items_reload, setItemsReload] = React.useState(undefined)
 
   let variant = "danger"
   let text = "Disconnected"
@@ -246,34 +245,34 @@ function Dashboard({ config = {}, result, location_list, shown_locations, settin
     text = "Connected"
   }
 
-  React.useEffect(() => {
-    let do_load = async () => {
-      console.log("Loading items")
-      setItemsLoaded(false);
-      setItemsPending(true);
-      setItemsReload(false);
+  // React.useEffect(() => {
+  //   let do_load = async () => {
+  //     console.log("Loading items")
+  //     setItemsLoaded(false);
+  //     setItemsPending(true);
+  //     setItemsReload(false);
 
-      let url = (config.db.host ? config.db.host : window.location.hostname) + (config.db.port ? ":" + config.db.port : "")
-      console.log(url)
-      APIBackend.api_get('http://' + url + '/state/').then((response) => {
-        if (response.status === 200) {
-          setItemsLoaded(true)
-          dispatch({ type: 'SET_ITEMS', item: response.payload })
-          setItemsError(false)
-        } else {
-          console.log("ERROR LOADING ITEMS")
-          dispatch({ type: 'SET_ITEMS', item: null })
-          setItemsError(true)
-        }
-      }).catch((err) => {
-        console.error(err.message);
-        setItemsError("ERROR: Unable to load items list!")
-      })
-    }
-    if ((!items_loaded && !items_pending) | items_reload) {
-      do_load()
-    }
-  }, [config.api, config.db, dispatch, items_loaded, items_pending, items_reload])
+  //     let url = (config.db.host ? config.db.host : window.location.hostname) + (config.db.port ? ":" + config.db.port : "")
+  //     console.log(url)
+  //     APIBackend.api_get('http://' + url + '/state/').then((response) => {
+  //       if (response.status === 200) {
+  //         setItemsLoaded(true)
+  //         dispatch({ type: 'SET_ITEMS', item: response.payload })
+  //         setItemsError(false)
+  //       } else {
+  //         console.log("ERROR LOADING ITEMS")
+  //         dispatch({ type: 'SET_ITEMS', item: null })
+  //         setItemsError(true)
+  //       }
+  //     }).catch((err) => {
+  //       console.error(err.message);
+  //       setItemsError("ERROR: Unable to load items list!")
+  //     })
+  //   }
+  //   if ((!items_loaded && !items_pending) | items_reload) {
+  //     do_load()
+  //   }
+  // }, [config.api, config.db, dispatch, items_loaded, items_pending, items_reload])
 
   return (
     <Container fluid className="p-0 d-flex flex-column">
@@ -286,7 +285,7 @@ function Dashboard({ config = {}, result, location_list, shown_locations, settin
                 onChange={date => setDate(date)}
                 dateFormat="yyyy-MM-dd"
               />
-            <ItemTable result={result} state={items_state} shown_locations={shown_locations} location_list={location_list} config={config} settings_page_size={settings_page_size} />
+            <ItemTable result={result} />
           </Card.Body>
         </Card>
       </Container>
@@ -308,7 +307,7 @@ function Dashboard({ config = {}, result, location_list, shown_locations, settin
   )
 }
 
-function ItemTable({ result, state, location_list, shown_locations = [], config, settings_page_size }) {
+function ItemTable({ result }) {
   let [loaded, setLoaded] = React.useState(false)
   let [pending, setPending] = React.useState(false)
   let [error, setError] = React.useState(null)
