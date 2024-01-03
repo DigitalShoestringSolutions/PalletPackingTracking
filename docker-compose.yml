@@ -53,7 +53,22 @@ services:
             driver: syslog
             options:
                 tag: docker-printer
-        restart: unless-stopped         
+        restart: unless-stopped
+    dashboard:
+        extends:
+            file: dashboard_ui/app.yml
+            service: app
+        networks:
+            internal:
+                aliases:
+                    - dashboard-ui.docker.local
+        logging:
+                driver: syslog
+                options:
+                        tag: docker-dashboard-ui
+        restart: unless-stopped
+        depends_on:
+            - "mqtt_broker"        
 
 networks:
         internal:

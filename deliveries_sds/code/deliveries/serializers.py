@@ -34,3 +34,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
         fields = ('id', 'product')
+
+
+class ProductTotalSerializer(serializers.Serializer):
+    product = serializers.CharField()
+    total_quantity = serializers.IntegerField()

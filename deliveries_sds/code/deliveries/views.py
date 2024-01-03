@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse
 from django.conf import settings
 from rest_framework import viewsets, status
@@ -35,4 +35,12 @@ def getUsers(request):
 def getProducts(request):
     products_qs = models.Product.objects.all()
     serializer = serializers.ProductSerializer(products_qs,many=True)
+    return Response(serializer.data)
+
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,BrowsableAPIRenderer))
+def getPackout(request,date):
+    product_totals = models.PalletItem.objects.filter(timestamp__date=date).values('product').annotate(total_quantity=Sum('quantity'))
+    print(product_totals)
+    serializer = serializers.ProductTotalSerializer(product_totals, many=True)
     return Response(serializer.data)
