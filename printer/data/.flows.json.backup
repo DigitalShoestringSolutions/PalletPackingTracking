@@ -104,7 +104,7 @@
         "id": "0843218562606a96",
         "type": "exec",
         "z": "0e1258dcaa4646a3",
-        "command": "python3 /code/test.py",
+        "command": "python3 /code/print.py",
         "addpay": "payload",
         "append": "",
         "useSpawn": "false",
@@ -139,7 +139,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 630,
+        "x": 710,
         "y": 80,
         "wires": []
     },
@@ -148,7 +148,7 @@
         "type": "function",
         "z": "0e1258dcaa4646a3",
         "name": "JSONify",
-        "func": "// Input data from the previous node\nvar inputData = msg.payload;\n\n// Construct the command to execute the Python script with an argument\nvar pythonScriptPath = '/code/test.py'; \nvar argumentValue = JSON.stringify(inputData);\nvar command = 'python3 ' + pythonScriptPath + ' ' + argumentValue;\n\n// Attach the command to the message payload\nmsg.payload = argumentValue;\n\nreturn msg;\n",
+        "func": "var inputData = msg.payload;\nmsg.payload = \"'\" + JSON.stringify(inputData) + \"'\";\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -176,8 +176,180 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 490,
-        "y": 320,
+        "x": 470,
+        "y": 280,
         "wires": []
+    },
+    {
+        "id": "dfa2b69531797fd9",
+        "type": "exec",
+        "z": "0e1258dcaa4646a3",
+        "command": "pip3 list",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 280,
+        "y": 660,
+        "wires": [
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
+            ]
+        ]
+    },
+    {
+        "id": "6f49a3aa3c27526d",
+        "type": "inject",
+        "z": "0e1258dcaa4646a3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 580,
+        "wires": [
+            [
+                "1ec791e9025aa134"
+            ]
+        ]
+    },
+    {
+        "id": "d697b7a169ac3fed",
+        "type": "debug",
+        "z": "0e1258dcaa4646a3",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "1ffa6d3ea5883303",
+        "type": "debug",
+        "z": "0e1258dcaa4646a3",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1ec791e9025aa134",
+        "type": "exec",
+        "z": "0e1258dcaa4646a3",
+        "command": "pip3 uninstall barcode",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 260,
+        "y": 580,
+        "wires": [
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
+            ]
+        ]
+    },
+    {
+        "id": "42f03d92267e6f3a",
+        "type": "inject",
+        "z": "0e1258dcaa4646a3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 660,
+        "wires": [
+            [
+                "dfa2b69531797fd9"
+            ]
+        ]
+    },
+    {
+        "id": "87cffc42795021f2",
+        "type": "inject",
+        "z": "0e1258dcaa4646a3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"item_id\":72,\"timestamp\":\"2024-01-04T16:26:37+00:00\"}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 320,
+        "wires": [
+            [
+                "0843218562606a96",
+                "1ffa6d3ea5883303"
+            ]
+        ]
     }
 ]
