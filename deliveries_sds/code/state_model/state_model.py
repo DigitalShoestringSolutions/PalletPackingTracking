@@ -55,6 +55,7 @@ class StateModel:
             newPallet = Pallet.objects.create(user=user, timestamp=timestamp, status='Packed', start_time=start_time)
             
             items = []
+            product_list = []
             for item_entry in raw_msg['items']:
                 pallet_item_instance = PalletItem.objects.create(
                     product=item_entry['product'],
@@ -62,7 +63,7 @@ class StateModel:
                     quantity=int(item_entry['count']),
                     pallet=newPallet
                 )
-            
+                product_list.append(item_entry['product'])
                 items.append(pallet_item_instance)
             
             newPallet.items.set(items)
@@ -72,6 +73,7 @@ class StateModel:
             to_print_msg = {
                     'item_id':newPallet.id,
                     'timestamp':newPallet.timestamp.isoformat(),
+                    'product':product_list,
                     }
 
             print(to_print_msg)

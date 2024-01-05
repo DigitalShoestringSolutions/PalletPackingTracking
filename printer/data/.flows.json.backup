@@ -341,14 +341,14 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"item_id\":72,\"timestamp\":\"2024-01-04T16:26:37+00:00\"}",
+        "payload": "{\"item_id\":9999999,\"timestamp\":\"2024-01-04T16:26:37+00:00\", \"product\":\"Product 1\"}",
         "payloadType": "json",
         "x": 110,
         "y": 320,
         "wires": [
             [
-                "0843218562606a96",
-                "1ffa6d3ea5883303"
+                "1ffa6d3ea5883303",
+                "cbddd9f859fac766"
             ]
         ]
     }
