@@ -2,7 +2,6 @@ FROM nodered/node-red:3.0.2
 RUN npm install node-red-contrib-pythonshell
 
 USER root
-RUN apk add py3-pip
-
-RUN pip install python-barcode==0.15.1 brother_ql==0.9.4 pillow==10.2.0
+RUN apk add py3-pip zlib zlib-dev jpeg-dev libpng-dev freetype-dev python3-dev gcc musl-dev
+RUN pip install python-barcode==0.15.1 brother-ql==0.9.4 pillow==6.2.2 pyusb==1.2.1 libusb
 USER node-red

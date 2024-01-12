@@ -10,20 +10,37 @@ import datetime
 from PIL import Image, ImageDraw, ImageFont
 import sys
 import json
+import usb.core
+import usb.util
 
+
+def find_brother_ql_printer():
+    # Search for the Brother QL printer by its vendor and product ID
+    dev = usb.core.find(idVendor=0x04f9, idProduct=0x209b)
+
+    if dev is None:
+        raise ValueError("Brother QL printer not found!")
+
+    return dev
 
 def sendToPrinter(path):
     ## Printer Set-up
-    os.system("sudo chmod +777 /dev/usb/lp0")
-    PRINTER_IDENTIFIER = '/dev/usb/lp0'
+    
+    # ~ dev = find_brother_ql_printer()
+    # ~ print(dev)
+    
+    
+    PRINTER_IDENTIFIER = '/dev/bus/usb/001/009'
+    os.system(f'sudo chmod +777 {PRINTER_IDENTIFIER}')
     printer = BrotherQLRaster('QL-700')
 
     filename = path
     print_data = brother_ql.brother_ql_create.convert(printer, [filename], '62', dither=True)
     try:
         send(print_data, PRINTER_IDENTIFIER)
-    except:
+    except(e):
         print("An exception occurred")
+        print(e)
 
 
 def createPNG(ID):
@@ -45,6 +62,7 @@ def create_formatted_label(barcode_path, date_packed, product, pallet_no, output
         # Assuming the example label dimensions based on the barcode size and the provided sample
         label_width = barcode_image.width 
         label_height = int(barcode_image.height * 2)
+        print(label_width)
 
         # Create a new image with white background
         label_image = Image.new('RGB', (label_width, label_height), 'white')
@@ -109,7 +127,7 @@ def main():
             print(f"{key}: {value}")
         createPNG(payload_dict['item_id'])
         create_formatted_label('/code/barcodes/barcode.png', payload_dict['timestamp'], payload_dict['product'], payload_dict['item_id'], '/code/barcodes/label.png', "")
-        # sendToPrinter('./barcodes/barcode.png')
+        sendToPrinter('/code/barcodes/label.png')
 
     except json.JSONDecodeError as e:
         print("Error parsing JSON:", e)
