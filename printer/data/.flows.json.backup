@@ -341,7 +341,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"item_id\":9999999,\"timestamp\":\"2024-01-04T16:26:37+00:00\", \"product\":[\"Product 1\", \"Product 2\"]}",
+        "payload": "{\"item_id\":100,\"timestamp\":\"2024-01-04T16:26:37+00:00\", \"product\":[\"Product 1\", \"Product 2\"]}",
         "payloadType": "json",
         "x": 110,
         "y": 320,

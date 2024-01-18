@@ -1,3 +1,4 @@
+import barcode
 from barcode import EAN13, Code128
 from barcode.writer import ImageWriter
 from io import BytesIO
@@ -44,14 +45,11 @@ def sendToPrinter(path):
         print(e)
 
 
-def createPNG(ID):
-    # Get the current working directory
-    print(os.path.exists('/code/barcodes/barcode.png'))
-    
-    with open('/code/barcodes/barcode.png', 'wb') as f:
-        Code128(str(ID), writer=ImageWriter()).write(f)
-
-
+def createPNG(ID, output_path):
+    bc_type = 'Code128' 
+    options = dict(module_height=10, quiet_zone=5,font_size=5,text_distance=1,background='white',foreground='black',center_text=False, format='PNG')    
+    BC = barcode.get_barcode_class(bc_type)
+    BC(str(ID), writer=ImageWriter()).save(output_path, options)
 
 
 def create_formatted_label(barcode_path, date_packed, product, pallet_no, output_path, customer=" "):
@@ -62,7 +60,7 @@ def create_formatted_label(barcode_path, date_packed, product, pallet_no, output
 
         # Assuming the example label dimensions based on the barcode size and the provided sample
         label_width = barcode_image.width 
-        label_height = int(barcode_image.height * 2)
+        label_height = int(barcode_image.height * 2.5)
         print(label_width)
 
         # Create a new image with white background
@@ -84,13 +82,13 @@ def create_formatted_label(barcode_path, date_packed, product, pallet_no, output
         
         # Define text positions based on the provided layout
         pallet_no_position = (10, int(label_height * 0.05))
-        pallet_no2_position = (10, int(label_height * 0.10))
+        pallet_no2_position = (10, int(label_height * 0.125))
         date_packed_position = (10, int(label_height * 0.15))
-        date_packed2_position = (10, int(label_height * 0.20))
+        date_packed2_position = (10, int(label_height * 0.225))
         customer_position = (10, int(label_height * 0.25))
-        customer2_position = (10, int(label_height * 0.30))
+        customer2_position = (10, int(label_height * 0.275))
         product_position = (10, int(label_height * 0.35))
-        product2_position = (10, int(label_height * 0.40))
+        product2_position = (10, int(label_height * 0.425))
 
         # Add text to the image
         draw.text(pallet_no_position, f"PALLET NO.", fill="black", font=font)
@@ -102,7 +100,7 @@ def create_formatted_label(barcode_path, date_packed, product, pallet_no, output
         draw.text(product_position, f"PRODUCT:", fill="black", font=font)
         for item in product:
             draw.text(product2_position, item, fill="black", font=font_small)
-            product2_position = (product2_position[0], product2_position[1] + int(label_height * 0.02))  # Adjust the vertical position        
+            product2_position = (product2_position[0], product2_position[1] + int(label_height * 0.03))  # Adjust the vertical position        
         # Save the new image
         label_image.save(output_path)
         
@@ -126,7 +124,7 @@ def main():
         print("Received payload data:")
         for key, value in payload_dict.items():
             print(f"{key}: {value}")
-        createPNG(payload_dict['item_id'])
+        createPNG(payload_dict['item_id'],'/code/barcodes/barcode' )
         create_formatted_label('/code/barcodes/barcode.png', payload_dict['timestamp'], payload_dict['product'], payload_dict['item_id'], '/code/barcodes/label.png', "")
         sendToPrinter('/code/barcodes/label.png')
 
