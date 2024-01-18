@@ -11,7 +11,7 @@
         "id": "c1a743fbe5ebc64c",
         "type": "mqtt-broker",
         "name": "",
-        "broker": "localhost",
+        "broker": "mqtt.docker.local",
         "port": "1883",
         "clientid": "",
         "autoConnect": true,
@@ -69,7 +69,7 @@
         "topic": "print",
         "qos": "2",
         "datatype": "auto-detect",
-        "broker": "0df5d573c269e3d7",
+        "broker": "c1a743fbe5ebc64c",
         "nl": false,
         "rap": true,
         "rh": 0,
@@ -349,6 +349,61 @@
             [
                 "1ffa6d3ea5883303",
                 "cbddd9f859fac766"
+            ]
+        ]
+    },
+    {
+        "id": "dcce2c72ccdca2ea",
+        "type": "inject",
+        "z": "0e1258dcaa4646a3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 500,
+        "wires": [
+            [
+                "a567a03fd698beaa"
+            ]
+        ]
+    },
+    {
+        "id": "a567a03fd698beaa",
+        "type": "exec",
+        "z": "0e1258dcaa4646a3",
+        "command": "whoami",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 260,
+        "y": 500,
+        "wires": [
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
             ]
         ]
     }

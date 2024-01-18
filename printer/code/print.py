@@ -30,12 +30,13 @@ def sendToPrinter(path):
     # ~ print(dev)
     
     
-    PRINTER_IDENTIFIER = '/dev/bus/usb/001/009'
-    os.system(f'sudo chmod +777 {PRINTER_IDENTIFIER}')
+    PRINTER_IDENTIFIER = '/dev/usb/lp0'    
     printer = BrotherQLRaster('QL-700')
 
-    filename = path
-    print_data = brother_ql.brother_ql_create.convert(printer, [filename], '62', dither=True)
+    print_data = brother_ql.brother_ql_create.convert(printer, [path], '62', dither=True)
+    
+    print(f'Print Data {print_data}')
+    print(path)
     try:
         send(print_data, PRINTER_IDENTIFIER)
     except(e):

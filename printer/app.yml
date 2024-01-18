@@ -2,9 +2,8 @@ version: '2'
 
 services:
     app:
-        build:
-          context: .
-          dockerfile: Dockerfile
+        privileged: true
+        build: .
         volumes:
           - ./data:/data:rw
           - ./config:/config:ro

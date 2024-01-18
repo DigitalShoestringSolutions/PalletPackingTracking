@@ -341,7 +341,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"item_id\":9999999,\"timestamp\":\"2024-01-04T16:26:37+00:00\", \"product\":[\"Product 1\", \"Product 2\"]}",
+        "payload": "{\"item_id\":100,\"timestamp\":\"2024-01-04T16:26:37+00:00\", \"product\":[\"Product 1\", \"Product 2\"]}",
         "payloadType": "json",
         "x": 110,
         "y": 320,
@@ -349,6 +349,61 @@
             [
                 "1ffa6d3ea5883303",
                 "cbddd9f859fac766"
+            ]
+        ]
+    },
+    {
+        "id": "dcce2c72ccdca2ea",
+        "type": "inject",
+        "z": "0e1258dcaa4646a3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 500,
+        "wires": [
+            [
+                "a567a03fd698beaa"
+            ]
+        ]
+    },
+    {
+        "id": "a567a03fd698beaa",
+        "type": "exec",
+        "z": "0e1258dcaa4646a3",
+        "command": "whoami",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 260,
+        "y": 500,
+        "wires": [
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
+            ],
+            [
+                "d697b7a169ac3fed"
             ]
         ]
     }
