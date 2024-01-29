@@ -63,7 +63,7 @@ class StateModel:
                     quantity=int(item_entry['count']),
                     pallet=newPallet
                 )
-                product_list.append(item_entry['product'])
+                product_list.append(item_entry['product']+' x'+item_entry['count'])
                 items.append(pallet_item_instance)
             
             newPallet.items.set(items)
