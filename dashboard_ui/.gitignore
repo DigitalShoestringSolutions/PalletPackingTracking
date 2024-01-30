@@ -1,0 +1,5 @@
+**/__pycache__/*
+**/data/*
+!**/.gitkeep
+start_local.sh
+*.DS_Store
