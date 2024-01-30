@@ -91,70 +91,38 @@ function Routing(props) {
   let [page_size, setPageSize] = React.useState(5)
   let [storageLoaded, setStorageLoaded] = React.useState(false)
   let [date, setDate] = React.useState(new Date())
+  let [grower_list, setGrowerList] = React.useState([])
+  let [product_list, setProductList] = React.useState([])
 
+  function UpdateResults(result) {
+    let grower_list = []
+    let product_list = []
+    result.forEach(item => {
+      if (!grower_list.includes(item['grower'])) {
+        grower_list.push(item['grower'])
+      }
+      if (!product_list.includes(item['product'])) {
+       product_list.push(item['product'])
+      }
+    })
+    setGrowerList(grower_list)
+    setProductList(product_list)
+    setResult(result)
+  }
 
-  
-
-  // React.useEffect(() => {
-  //   if (localStorage.getItem('shown_locations')) {
-  //     setShownLocations(JSON.parse(localStorage.getItem('shown_locations')))
-  //     console.log("shown set to storage")
-  //     setShownLocsSet(true)
-  //   }
-
-  //   if (localStorage.getItem('page_size')) {
-  //     let value = JSON.parse(localStorage.getItem('page_size'))
-  //     setPageSize(value)
-  //     console.log("page size from storage",value)
-  //   }
-  //   setStorageLoaded(true)
-  // }, [])
-
-  // React.useEffect(() => {
-  //   if (!shown_locs_set) {
-
-  //     if (props.config.shown_locations) {
-  //       if (props.config.shown_locations === "*") {
-  //         if (location_list.length > 0) {
-  //           setShownLocations(location_list.map(elem => elem.id))
-  //           console.log("shown set to all")
-  //           setShownLocsSet(true)
-  //         }
-  //       } else if (props.config.shown_locations) {
-  //         setShownLocations(props.config.shown_locations)
-  //         console.log("shown set to config")
-  //         setShownLocsSet(true)
-  //       }
-  //     }
-  //   }
-  // }, [location_list, props.config, shown_locs_set])
-
-  // React.useEffect(() => {
-  //   if (storageLoaded && shown_locations.length > 0) {
-  //     console.log("Saving shown ", shown_locations)
-  //     localStorage.setItem('shown_locations', JSON.stringify(shown_locations));
-  //   }
-  // }, [shown_locations, storageLoaded])
-
-  // React.useEffect(() => {
-  //   if (storageLoaded) {
-  //     console.log("Saving page_size ", page_size)
-  //     localStorage.setItem('page_size', JSON.stringify(page_size));
-  //   }
-  // }, [page_size, storageLoaded])
 
   return (
     <Routes>
-      <Route path='/' element={<Base  date={date} setDate={setDate} setResult={setResult} {...props} />}>
+      <Route path='/' element={<Base  date={date} setDate={setDate} setResult={setResult} UpdateResults={UpdateResults} {...props} />}>
         {/* <Route path='/settings' element={<SettingsPage location_list={location_list} config={props.config} shown_locations={shown_locations} setShownLocations={setShownLocations} page_size={page_size} setPageSize={setPageSize} />} /> */}
-        <Route index element={<Dashboard date={date} setDate={setDate} result={result}  />}></Route>
+        <Route index element={<Dashboard date={date} setDate={setDate} result={result} grower_list={grower_list} product_list={product_list} />}></Route>
       </Route>
     </Routes>
   )
 }
 
 
-function Base({ date, setDate, setResult, config }) {
+function Base({ date, setDate, setResult, config, UpdateResults }) {
   let [loaded, setLoaded] = React.useState(false)
   let [pending, setPending] = React.useState(false)
   let [error, setError] = React.useState(null)
@@ -174,7 +142,7 @@ function Base({ date, setDate, setResult, config }) {
           console.log(response.payload)
           console.log("Type: ", typeof (response.payload))
           // setLocationList(response.payload)
-          setResult(response.payload)
+          UpdateResults(response.payload)
           setLoaded(true)
         } else {
           console.error("Unable to load products")
@@ -227,7 +195,7 @@ function BSNavLink({ children, className, ...props }) {
   return <NavLink className={({ isActive }) => (isActive ? ("nav-link active " + className) : ("nav-link " + className))} {...props}>{children}</NavLink>
 }
 
-function Dashboard({ config = {}, result, setDate, date }) {
+function Dashboard({ config = {}, result, setDate, date, grower_list, product_list}) {
   const { sendJsonMessage } = useMQTTControl()
   let toast_dispatch = useToastDispatch()
   let dispatch = useMQTTDispatch()
@@ -285,7 +253,7 @@ function Dashboard({ config = {}, result, setDate, date }) {
                 onChange={date => setDate(date)}
                 dateFormat="yyyy-MM-dd"
               />
-            <ItemTable result={result} />
+            <ItemTable result={result} product_list={product_list} grower_list={grower_list}/>
           </Card.Body>
         </Card>
       </Container>
@@ -307,31 +275,73 @@ function Dashboard({ config = {}, result, setDate, date }) {
   )
 }
 
-function ItemTable({ result }) {
+function ItemTable({ result, grower_list, product_list}) {
   let [loaded, setLoaded] = React.useState(false)
   let [pending, setPending] = React.useState(false)
   let [error, setError] = React.useState(null)
   let [itemNames, setItemNames] = React.useState({})
+  
+
 
   return <>
     <Table bordered striped responsive="sm">
       <thead>
         <tr>
-          {result ? result.map((item, index) => (
-            <th key={item['product']} colSpan={1}><h3>{item['product']}</h3></th>
+          <th key='grower' colSpan={1}><h3>Grower</h3></th>
+          {product_list ? product_list.map((item, index) => (
+            <th key={item} colSpan={1}><h3>{item}</h3></th>
           )): null}
           <th key='total' colSpan={1}><h3>Total</h3></th>
 
         </tr>
       </thead>
       <tbody>
-          <tr>
-            {result ? result.map((item, index) => (
-              <td>{item['total_quantity']}</td>
-            )) : null}
-            <td>{result ? result.reduce((acc, elem) => { return acc + elem['total_quantity'] }, 0) : null}</td>
-          </tr>
-      </tbody>
+        {grower_list ? grower_list.map((grower, growerIndex) => (
+            <tr key={grower}>
+                <td key={grower}> {grower} </td>
+                {product_list ? product_list.map((product, productIndex) => {
+                    try{
+                      const item = result.find(item => item.grower === grower && item.product === product);
+                      return (
+                          <td key={`${grower}-${product}`}>
+                              {item ? item.total_quantity : ''}
+                          </td>
+                      );}
+                    catch(e){};
+                }) : null}
+                <td>
+                    {result ? result.reduce((acc, elem) => {
+                        return elem.grower === grower ? acc + elem.total_quantity : acc
+                    }, 0) : null}
+                </td>
+            </tr>
+        )) : null}
+        <tr key='total'>
+            <td style={{fontWeight: 'bold'}} key='total'>Total</td>
+            {product_list ? product_list.map((product, productIndex) => {
+                try{
+                  const items = result.filter(item => item.product === product);
+                  const total = items.reduce((acc, elem) => {
+                      return acc + elem.total_quantity
+                  }, 0);
+
+                  return (
+                      <td style={{fontWeight: 'bold'}} key={`${product}`}>
+                          {total ? total : ''}
+                      </td>
+                  );}
+                catch(e){};
+            }) : null}
+            <td style={{fontWeight: 'bold'}}>
+                {result ? result.reduce((acc, elem) => {
+                    return acc + elem.total_quantity
+                }, 0) : null}
+            </td>
+        </tr>
+    </tbody>
+
+
+
     </Table>
   </>
 

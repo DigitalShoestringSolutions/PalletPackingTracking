@@ -38,4 +38,5 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductTotalSerializer(serializers.Serializer):
     product = serializers.CharField()
+    grower = serializers.CharField()
     total_quantity = serializers.IntegerField()

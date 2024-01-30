@@ -40,7 +40,11 @@ def getProducts(request):
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,BrowsableAPIRenderer))
 def getPackout(request,date):
-    product_totals = models.PalletItem.objects.filter(timestamp__date=date).values('product').annotate(total_quantity=Sum('quantity'))
+    # product_totals = models.PalletItem.objects.filter(timestamp__date=date).values('product').annotate(total_quantity=Sum('quantity'))
+    product_totals = models.PalletItem.objects.filter(timestamp__date=date).values('product', 'grower').annotate(total_quantity=Sum('quantity'))
+    # growers = models.PalletItem.objects.filter(timestamp__date=date).values('grower')
+    # products = models.PalletItem.objects.filter(timestamp__date=date).values('grower')
+    
     print(product_totals)
     serializer = serializers.ProductTotalSerializer(product_totals, many=True)
     return Response(serializer.data)
