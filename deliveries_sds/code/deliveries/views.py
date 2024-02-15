@@ -13,9 +13,6 @@ from . import models
 from . import serializers
 
 
-
-
-
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,BrowsableAPIRenderer))
 def getSuppliers(request):
@@ -47,4 +44,15 @@ def getPackout(request,date):
     
     print(product_totals)
     serializer = serializers.ProductTotalSerializer(product_totals, many=True)
+    return Response(serializer.data)
+
+
+@api_view(('GET',))
+@renderer_classes((JSONRenderer,BrowsableAPIRenderer))
+def getPalletItems(request,date=None):
+    if date:
+        palletItems_qs = models.PalletItem.objects.filter(timestamp__date=date)
+    else:
+        palletItems_qs = models.PalletItem.objects.all()
+    serializer = serializers.PalletItemSerializer(palletItems_qs,many=True)
     return Response(serializer.data)

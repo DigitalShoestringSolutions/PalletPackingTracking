@@ -40,3 +40,8 @@ class ProductTotalSerializer(serializers.Serializer):
     product = serializers.CharField()
     grower = serializers.CharField()
     total_quantity = serializers.IntegerField()
+
+class PalletItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PalletItem
+        fields = ('id', 'product', 'quantity', 'grower', 'timestamp')

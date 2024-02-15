@@ -12,7 +12,9 @@ urlpatterns= [
         path('suppliers/', views.getSuppliers),
         path('users/', views.getUsers),
         path('products/', views.getProducts), 
-        path('packout/<str:date>',views.getPackout)
+        path('packout/<str:date>',views.getPackout), 
+        path('palletItems/',views.getPalletItems),
+        path('palletItems/<str:date>',views.getPalletItems)
     ]
 
 #/state/                            ?t=timestamp
