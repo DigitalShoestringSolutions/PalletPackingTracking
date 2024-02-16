@@ -1,5 +1,7 @@
 **/__pycache__/*
 **/data/*
+!**/printer/data/*
+**/printer/data/*/*
 !**/.gitkeep
 start_local.sh
 *.DS_Store
