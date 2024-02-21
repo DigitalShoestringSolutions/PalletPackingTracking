@@ -1,7 +1,6 @@
 FROM node:19-alpine AS appbuild
 COPY ./code/package.json /
 RUN npm install
-RUN npm install react-datepicker
 RUN npm -v
 COPY ./code /
 RUN npm run build
