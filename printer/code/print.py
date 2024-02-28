@@ -127,6 +127,8 @@ def main():
         createPNG(payload_dict['item_id'],'/code/barcodes/barcode' )
         create_formatted_label('/code/barcodes/barcode.png', payload_dict['timestamp'], payload_dict['product'], payload_dict['item_id'], '/code/barcodes/label.png', "")
         sendToPrinter('/code/barcodes/label.png')
+        sendToPrinter('/code/barcodes/label.png')
+        
 
     except json.JSONDecodeError as e:
         print("Error parsing JSON:", e)
